@@ -470,9 +470,12 @@ function App() {
         </div>
       </header>
 
-      {screen === 'home' && <HomeScreen progress={progress} onStart={() => setScreen('setup')} onReview={() => setScreen('weak')} onAbout={() => setScreen('about')} onPrivacy={() => setScreen('privacy')} />}
+      {screen === 'home' && <HomeScreen progress={progress} onStart={() => setScreen('setup')} onReview={() => setScreen('weak')} onAbout={() => setScreen('about')} onPrivacy={() => setScreen('privacy')} onSyllabus={() => setScreen('syllabus')} onTips={() => setScreen('tips')} onFaq={() => setScreen('faq')} />}
       {screen === 'about' && <AboutScreen onHome={resetToHome} />}
       {screen === 'privacy' && <PrivacyScreen onHome={resetToHome} />}
+      {screen === 'syllabus' && <SyllabusScreen onHome={resetToHome} onStart={() => setScreen('setup')} />}
+      {screen === 'tips' && <TipsScreen onHome={resetToHome} />}
+      {screen === 'faq' && <FaqScreen onHome={resetToHome} />}
       {screen === 'setup' && (
         <SetupScreen
           config={config}
@@ -520,7 +523,7 @@ function App() {
   );
 }
 
-function HomeScreen({ progress, onStart, onReview, onAbout, onPrivacy }) {
+function HomeScreen({ progress, onStart, onReview, onAbout, onPrivacy, onSyllabus, onTips, onFaq }) {
   const history = progress.history || [];
   const lastFive = [...history].reverse().slice(0, 5);
   const totalAttempted = history.reduce((s, h) => s + h.total, 0);
@@ -583,6 +586,25 @@ function HomeScreen({ progress, onStart, onReview, onAbout, onPrivacy }) {
               <div className="pct">{w}% of paper</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <h2 className="section-title">Guides &amp; resources</h2>
+        <p className="muted">Read up on exam patterns and strategy alongside your practice.</p>
+        <div className="section-grid">
+          <button className="section-pill" onClick={onSyllabus}>
+            <div className="name">Syllabus Guide</div>
+            <div className="count">Section-wise exam pattern</div>
+          </button>
+          <button className="section-pill" onClick={onTips}>
+            <div className="name">Study Tips &amp; Strategy</div>
+            <div className="count">How to prepare effectively</div>
+          </button>
+          <button className="section-pill" onClick={onFaq}>
+            <div className="name">FAQs</div>
+            <div className="count">Common candidate questions</div>
+          </button>
         </div>
       </div>
 
@@ -649,6 +671,185 @@ function PrivacyScreen({ onHome }) {
         We do not knowingly collect information from children. If you have questions about this policy,
         please reach out through the contact details provided on the site you accessed MeritPrep from.
       </p>
+    </div>
+  );
+}
+
+function SyllabusScreen({ onHome, onStart }) {
+  const sections = [
+    {
+      name: "Current Affairs & General Knowledge",
+      weight: WEIGHTS["Current Affairs & General Knowledge"],
+      points: [
+        "National and international news from the last 12–18 months",
+        "Pakistan's foreign relations, regional organisations (SCO, SAARC, ECO)",
+        "Government initiatives, CPEC-related developments, and major appointments",
+        "Basic geography, world capitals, currencies, and organisations (UN, IMF, WHO)"
+      ]
+    },
+    {
+      name: "English (Language, Grammar & Comprehension)",
+      weight: WEIGHTS["English (Language, Grammar & Comprehension)"],
+      points: [
+        "Sentence correction, subject-verb agreement, tenses",
+        "Synonyms, antonyms, and vocabulary in context",
+        "Idioms, phrases, and one-word substitutions",
+        "Short comprehension passages and inference questions"
+      ]
+    },
+    {
+      name: "Arithmetical & Analytical Reasoning",
+      weight: WEIGHTS["Arithmetical & Analytical Reasoning"],
+      points: [
+        "Percentages, ratios, averages, profit and loss",
+        "Time, speed, distance, and work-rate problems",
+        "Number series, analogies, and logical sequences",
+        "Basic data interpretation from tables and simple charts"
+      ]
+    },
+    {
+      name: "Computer Related Knowledge",
+      weight: WEIGHTS["Computer Related Knowledge"],
+      points: [
+        "Basic hardware, software, and operating system concepts",
+        "MS Office (Word, Excel, PowerPoint) fundamentals",
+        "Internet, email, and networking basics",
+        "Common abbreviations and terminology (CPU, RAM, URL, etc.)"
+      ]
+    },
+    {
+      name: "Islamiyat & Pakistan Affairs",
+      weight: WEIGHTS["Islamiyat & Pakistan Affairs"],
+      points: [
+        "Basic beliefs, pillars of Islam, and seerah",
+        "History of the Pakistan Movement and key personalities",
+        "Constitutional history: 1956, 1962, and 1973 constitutions",
+        "Geography, provinces, and administrative structure of Pakistan"
+      ]
+    }
+  ];
+
+  return (
+    <div className="card">
+      <div className="top-nav">
+        <h2 className="section-title" style={{margin: 0}}>Syllabus Guide</h2>
+        <button className="btn-secondary btn" onClick={onHome}>Back to home</button>
+      </div>
+      <p className="muted">
+        Most PPSC, FPSC, and NTS-based public service tests draw from the same five broad areas. The
+        exact weightage varies by post and advertisement, but this is a typical breakdown you can use
+        to plan your study time.
+      </p>
+      {sections.map(sec => (
+        <div key={sec.name} style={{marginTop: '1.1rem'}}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline'}}>
+            <h3 style={{fontSize: '14.5px', margin: '0 0 6px'}}>{sec.name}</h3>
+            <span className="badge">{sec.weight}%</span>
+          </div>
+          <ul style={{margin: '0 0 0 1.1rem', padding: 0, fontSize: '13.5px', color: 'var(--ink-soft)', lineHeight: 1.7}}>
+            {sec.points.map((pt, i) => <li key={i}>{pt}</li>)}
+          </ul>
+        </div>
+      ))}
+      <div className="btn-row">
+        <button className="btn" onClick={onStart}>Practice this syllabus ↗</button>
+      </div>
+    </div>
+  );
+}
+
+function TipsScreen({ onHome }) {
+  const tips = [
+    {
+      title: "Start with a full-length diagnostic test",
+      body: "Before you plan a study schedule, take one test using all sections at once. Your section-wise accuracy on the Weak Areas page will tell you where to actually spend your time, instead of guessing."
+    },
+    {
+      title: "Study in short, timed sessions",
+      body: "Most public service tests give you roughly a minute per question. Practising in timed mode regularly trains your pacing, not just your knowledge — many candidates who know the material still run out of time on test day."
+    },
+    {
+      title: "Read every explanation, even for correct answers",
+      body: "Getting a question right by luck or a process of elimination isn't the same as understanding it. Reading the explanation confirms whether your reasoning was actually sound."
+    },
+    {
+      title: "Rotate sections instead of mastering one at a time",
+      body: "Testing yourself across mixed sections, closer to how the real paper is structured, builds the mental flexibility to switch topics quickly, rather than only performing well in a single narrow area."
+    },
+    {
+      title: "Revisit flagged and wrong questions after a few days",
+      body: "Spaced repetition works. Flag questions you're unsure about during a test, then come back to that section a few days later rather than immediately, so you're testing memory, not short-term recall."
+    },
+    {
+      title: "Keep a running list of current affairs, weekly",
+      body: "Current affairs content changes constantly and can't be crammed at the end. Set aside 15–20 minutes a week to note major national and international developments as they happen."
+    }
+  ];
+
+  return (
+    <div className="card">
+      <div className="top-nav">
+        <h2 className="section-title" style={{margin: 0}}>Study Tips &amp; Strategy</h2>
+        <button className="btn-secondary btn" onClick={onHome}>Back to home</button>
+      </div>
+      <p className="muted">
+        Practical, test-taking advice for PPSC, FPSC, and NTS-style exams — based on how these papers
+        are typically structured and timed.
+      </p>
+      {tips.map((tip, i) => (
+        <div key={i} style={{marginTop: '1rem'}}>
+          <h3 style={{fontSize: '14.5px', margin: '0 0 4px'}}>{i + 1}. {tip.title}</h3>
+          <p style={{fontSize: '13.5px', color: 'var(--ink-soft)', margin: 0, lineHeight: 1.6}}>{tip.body}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FaqScreen({ onHome }) {
+  const faqs = [
+    {
+      q: "Is MeritPrep really free?",
+      a: "Yes. There's no signup, subscription, or payment required to take practice tests. The full question bank is available to everyone."
+    },
+    {
+      q: "Is this affiliated with PPSC, FPSC, or NTS?",
+      a: "No. MeritPrep is an independent practice tool built to help candidates prepare. It is not affiliated with, endorsed by, or connected to any Public Service Commission, NTS, or government body. Always cross-check the official syllabus for your specific post and advertisement."
+    },
+    {
+      q: "Will my progress be saved if I close the browser?",
+      a: "Yes, your test history and scores are saved locally in your browser (localStorage), so they'll still be there next time you visit on the same device and browser. They won't carry over if you switch devices or browsers, or clear your browsing data."
+    },
+    {
+      q: "How are the practice tests weighted?",
+      a: "When you choose 'All Sections (weighted)', questions are pulled from each subject roughly in proportion to how these subjects tend to be weighted on typical public service exams. You can also pick a single section if you want focused practice."
+    },
+    {
+      q: "What does timed mode do?",
+      a: "Timed mode gives you a per-question countdown, similar to the pacing pressure of a real exam. If time runs out on a question, it's marked as unanswered and you move to the next one. You can turn it off for untimed, self-paced practice."
+    },
+    {
+      q: "How is 'weak areas' calculated?",
+      a: "The Weak Areas page looks at every question you've ever attempted across all your past tests, groups them by section, and shows your accuracy per section — so you can see which subjects need more attention."
+    },
+    {
+      q: "Can I use this on my phone?",
+      a: "Yes, the site is designed to work on both desktop and mobile browsers."
+    }
+  ];
+
+  return (
+    <div className="card">
+      <div className="top-nav">
+        <h2 className="section-title" style={{margin: 0}}>Frequently Asked Questions</h2>
+        <button className="btn-secondary btn" onClick={onHome}>Back to home</button>
+      </div>
+      {faqs.map((item, i) => (
+        <div key={i} style={{marginTop: i === 0 ? 0 : '1rem'}}>
+          <h3 style={{fontSize: '14.5px', margin: '0 0 4px'}}>{item.q}</h3>
+          <p style={{fontSize: '13.5px', color: 'var(--ink-soft)', margin: 0, lineHeight: 1.6}}>{item.a}</p>
+        </div>
+      ))}
     </div>
   );
 }
